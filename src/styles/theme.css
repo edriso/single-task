@@ -1,0 +1,283 @@
+/* Single-Task — near-black "void" (and a paper theme), Fraunces. Ported from the
+   prototype. Entrances animate transform only (opacity stays 1); the focus-mode
+   fade animates opacity from 0.4 (never 0) so it can't freeze invisible. */
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #0c0c0e;
+  --color-accent: #d8c8a0;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-ui: 'Hanken Grotesk', system-ui, sans-serif;
+}
+
+:root {
+  --accent: #d8c8a0;
+  --serif: 'Fraunces', Georgia, serif;
+  --ui: 'Hanken Grotesk', system-ui, sans-serif;
+}
+[data-theme='void'] {
+  --bg: #0c0c0e;
+  --bg2: #070708;
+  --surface: #161618;
+  --surface2: #1f1f22;
+  --line: rgba(235, 235, 240, 0.1);
+  --ink: #edecec;
+  --dim: #9a9a9f;
+  --faint: #56565c;
+  --on: #14130f;
+  --soft: color-mix(in oklab, var(--accent) 16%, transparent);
+  color-scheme: dark;
+}
+[data-theme='paper'] {
+  --bg: #f3f1ec;
+  --bg2: #e9e6df;
+  --surface: #fff;
+  --surface2: #eeeae2;
+  --line: rgba(30, 28, 22, 0.13);
+  --ink: #23211c;
+  --dim: #67625a;
+  --faint: #a59f93;
+  --on: #fff;
+  --soft: color-mix(in oklab, var(--accent) 30%, transparent);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--ui);
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.6s;
+}
+button {
+  font-family: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+.stage {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.word {
+  font-family: var(--serif);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  margin-bottom: clamp(30px, 9vh, 70px);
+}
+.h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 7vw, 36px);
+  line-height: 1.15;
+  margin: 0 0 14px;
+}
+.sub {
+  color: var(--dim);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 30px;
+  max-width: 340px;
+}
+.field {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 22px;
+  outline: none;
+  text-align: center;
+  margin-bottom: 18px;
+}
+.field:focus {
+  border-color: var(--accent);
+}
+.field::placeholder {
+  color: var(--faint);
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 16px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--on);
+  font-weight: 700;
+  font-size: 16.5px;
+  transition:
+    filter 0.15s,
+    transform 0.1s;
+}
+.cta:hover {
+  filter: brightness(1.06);
+}
+.cta:active {
+  transform: scale(0.97);
+}
+.cta:disabled {
+  opacity: 0.4;
+}
+.ghost {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--dim);
+}
+.queue {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 400px;
+}
+.ql {
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 10px;
+}
+.qrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--dim);
+  font-size: 15px;
+}
+.qrow .qx {
+  margin-inline-start: auto;
+  background: none;
+  border: none;
+  color: var(--faint);
+  cursor: pointer;
+  font-size: 15px;
+}
+.focus {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  z-index: 20;
+}
+.focus .the-task {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(30px, 8vw, 52px);
+  line-height: 1.15;
+  color: var(--ink);
+  max-width: 680px;
+  margin-bottom: 30px;
+  letter-spacing: -0.01em;
+}
+.focus .meta {
+  font-family: var(--ui);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 40px;
+}
+.ftimer {
+  font-variant-numeric: tabular-nums;
+}
+.fbtns {
+  display: flex;
+  gap: 12px;
+}
+.haze {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 42%, transparent 30%, var(--bg) 78%);
+  opacity: 0.6;
+}
+.done-mark {
+  font-size: 52px;
+  margin-bottom: 14px;
+}
+.corner {
+  position: fixed;
+  top: 18px;
+  inset-inline-end: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--faint);
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 30;
+}
+.corner-l {
+  inset-inline-start: 18px;
+  inset-inline-end: auto;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(10px);
+  }
+  to {
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+@keyframes fadein {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fadein {
+  animation: fadein 0.8s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
