@@ -4,7 +4,10 @@ import type { Accent, Settings, Theme } from '@/types/domain';
 
 interface TaskState {
   settings: Settings;
+  /** The one thing in focus right now (persisted), or null when none. */
+  active: string | null;
   queue: string[];
+  setActive: (active: string | null) => void;
   enqueue: (task: string) => void;
   dequeueAt: (index: number) => void;
   setUseTimer: (on: boolean) => void;
@@ -24,7 +27,9 @@ export const useTaskStore = create<TaskState>((set, get) => {
   }
   return {
     settings: initial.settings,
+    active: initial.active,
     queue: initial.queue,
+    setActive: (active) => set({ active: repository.setActive(active).active }),
     enqueue: (task) => {
       if (task.trim()) commit([...get().queue, task.trim()]);
     },

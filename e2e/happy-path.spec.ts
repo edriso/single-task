@@ -17,6 +17,12 @@ test('name one thing, focus, done, and the queue persists', async ({ page }) => 
   await page.getByRole('button', { name: 'Begin' }).click();
   await expect(page.getByText('the only thing right now')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'finish the draft' })).toBeVisible();
+
+  // The one thing survives an accidental reload — focus mode comes back.
+  await page.reload();
+  await expect(page.getByText('the only thing right now')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'finish the draft' })).toBeVisible();
+
   await page.getByRole('button', { name: 'Done' }).click();
   await expect(page.getByRole('heading', { name: 'Done.' })).toBeVisible();
   await expect(page.getByRole('button', { name: /Next: clear the inbox/ })).toBeVisible();

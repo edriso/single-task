@@ -19,6 +19,8 @@ export type Settings = z.infer<typeof settingsSchema>;
 export const persistedStateSchema = z.object({
   version: z.literal(1),
   settings: settingsSchema,
+  /** The one thing in focus right now — survives a reload so it's never lost. */
+  active: z.string().nullable().default(null),
   /** Tasks parked "for later" — one thing at a time, the rest wait here. */
   queue: z.array(z.string()),
 });

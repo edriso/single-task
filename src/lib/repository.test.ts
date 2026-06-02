@@ -28,8 +28,16 @@ describe('repository', () => {
   });
   it('returns defaults / tolerates corrupt data', () => {
     expect(repo.getState().settings.mins).toBe(25);
+    expect(repo.getState().active).toBeNull();
     storage.setItem('st-v1', 'nope');
     expect(repo.getState().queue).toEqual([]);
+    expect(repo.getState().active).toBeNull();
+  });
+  it('persists and clears the active focus task', () => {
+    repo.setActive('write the report');
+    expect(repo.getState().active).toBe('write the report');
+    repo.setActive(null);
+    expect(repo.getState().active).toBeNull();
   });
   it('round-trips queue and settings', () => {
     repo.setQueue(['email', 'invoice']);

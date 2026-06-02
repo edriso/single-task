@@ -8,14 +8,18 @@ import { useTaskStore } from '@/store/task-store';
 export function App() {
   useApplyTheme();
   const { useTimer, mins, theme } = useTaskStore((state) => state.settings);
+  const active = useTaskStore((state) => state.active);
+  const setActive = useTaskStore((state) => state.setActive);
   const queue = useTaskStore((state) => state.queue);
   const enqueue = useTaskStore((state) => state.enqueue);
   const dequeueAt = useTaskStore((state) => state.dequeueAt);
   const setTheme = useTaskStore((state) => state.setTheme);
 
   const [draft, setDraft] = useState('');
-  const [active, setActive] = useState<string | null>(null);
-  const [left, setLeft] = useState(0);
+  // A restored task comes back paused at full time — the exact countdown is never persisted.
+  const [left, setLeft] = useState(() =>
+    useTaskStore.getState().active ? useTaskStore.getState().settings.mins * 60 : 0,
+  );
   const [running, setRunning] = useState(false);
   const [doneMsg, setDoneMsg] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -43,6 +47,8 @@ export function App() {
     }
   }
   function complete() {
+    // The task is finished — clear it from storage so a reload won't resurrect it.
+    setActive(null);
     setDoneMsg(true);
     setRunning(false);
   }
@@ -52,7 +58,7 @@ export function App() {
     setRunning(false);
   }
 
-  if (active !== null) {
+  if (active !== null || doneMsg) {
     return (
       <div className="focus fadein">
         <div className="haze" aria-hidden="true" />
